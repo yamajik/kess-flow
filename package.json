@@ -1,0 +1,27 @@
+{
+  "name": "kess-flow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/events": "^3.0.0",
+    "@types/node": "^14.14.31",
+    "@types/uuid": "^8.3.0",
+    "easy-monitor": "^2.2.8",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.5"
+  },
+  "dependencies": {
+    "@types/ioredis": "^4.22.0",
+    "events": "^3.2.0",
+    "ioredis": "^4.23.0",
+    "ioredis-mock": "^5.2.4",
+    "microseconds": "^0.2.0",
+    "uuid": "^8.3.2"
+  }
+}
