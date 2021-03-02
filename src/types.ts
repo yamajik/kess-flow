@@ -1,4 +1,4 @@
-import { Component } from "./component";
+import { Component } from "./components";
 import { Graph } from "./graph";
 import { MsgBus } from "./msgbus";
 import * as redis from "./redis";
