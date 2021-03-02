@@ -39,7 +39,7 @@ export class Graph {
     return this.routeMap.get(cpToString(np)) || [];
   }
 
-  diff(old: Graph): types.Graph.DiffResults {
+  diff(old?: Graph): types.Graph.DiffResults {
     const results: types.Graph.DiffResults = {
       nodes: {
         added: [],
@@ -47,21 +47,28 @@ export class Graph {
         updated: []
       }
     };
-    const nodeIds = new Set([
-      ...Object.keys(this.options.processes),
-      ...Object.keys(old.options.processes)
-    ]);
-    nodeIds.forEach(id => {
-      const oldNode = old.options.processes[id],
-        newNode = this.options.processes[id];
-      if (!oldNode) {
+    if (!old) {
+      Object.keys(this.options.processes).forEach(id => {
+        const newNode = this.options.processes[id];
         results.nodes.added.push({ id, newNode });
-      } else if (!newNode) {
-        results.nodes.removed.push({ id, oldNode });
-      } else if (JSON.stringify(newNode) !== JSON.stringify(oldNode)) {
-        results.nodes.updated.push({ id, newNode });
-      }
-    });
+      });
+    } else {
+      const nodeIds = new Set([
+        ...Object.keys(this.options.processes),
+        ...Object.keys(old.options.processes)
+      ]);
+      nodeIds.forEach(id => {
+        const oldNode = old.options.processes[id],
+          newNode = this.options.processes[id];
+        if (!oldNode) {
+          results.nodes.added.push({ id, newNode });
+        } else if (!newNode) {
+          results.nodes.removed.push({ id, oldNode });
+        } else if (JSON.stringify(newNode) !== JSON.stringify(oldNode)) {
+          results.nodes.updated.push({ id, newNode });
+        }
+      });
+    }
     return results;
   }
 }

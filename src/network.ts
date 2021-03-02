@@ -9,6 +9,8 @@ export class Network {
   msgbus: MsgBus;
   options: types.Network.Options;
   nodes: Map<string, Component>;
+  graph?: Graph;
+  running: boolean;
 
   constructor(options?: types.Network.Options) {
     this.options = {
@@ -23,6 +25,7 @@ export class Network {
     };
     this.msgbus = this.options.msgbus || new MsgBus();
     this.nodes = new Map<string, Component>();
+    this.running = false;
     if (this.options.graph) {
       this.loadFromGraph(this.options.graph);
     }
@@ -32,20 +35,41 @@ export class Network {
   }
 
   static load(filename: string, options?: types.Network.Options): Network {
-    return new Network({ graph: Graph.load(filename), ...options });
+    const network = new Network(options);
+    network.loadFromGraph(Graph.load(filename));
+    return network;
+  }
+
+  update(filename: string): Network {
+    this.updateFromGraph(Graph.load(filename));
+    return this;
   }
 
   get id(): string {
     return this.options.id;
   }
 
-  addComponent(c: Component): Component {
-    this.nodes.set(c.id, c);
-    return c;
+  addNode(node: Component): Component {
+    const context = this.context({
+      source: { network: this.id, node: node.id },
+      target: { network: this.id, node: this.options.router }
+    });
+    this.nodes.set(node.id, node);
+    this.msgbus.addListener(`${this.id}.${node.id}`, async () => {
+      await node.process(context);
+    });
+    if (this.running) {
+      node.setup(context);
+    }
+    return node;
   }
 
-  removeComponent(c: Component): boolean {
-    return this.nodes.delete(c.id);
+  removeNode(node: Component): boolean {
+    this.msgbus.removeListener(`${this.id}.${node.id}`);
+    if (this.running) {
+      node.teardown();
+    }
+    return this.nodes.delete(node.id);
   }
 
   getComponent(options: any): Component {
@@ -66,11 +90,12 @@ export class Network {
   }
 
   loadFromGraph(graph: Graph): void {
+    this.graph = graph;
     graph.nodes.forEach(node => {
-      this.addComponent(this.getComponent(node));
+      this.addNode(this.getComponent(node));
     });
     if (this.options.router) {
-      this.addComponent(
+      this.addNode(
         this.getComponent({
           type: this.options.router,
           id: this.options.router,
@@ -80,28 +105,53 @@ export class Network {
     }
   }
 
+  updateFromGraph(graph: Graph): void {
+    const { nodes } = graph.diff(this.graph);
+    const router = this.getComponent({
+      type: this.options.router,
+      id: this.options.router,
+      graph
+    });
+    this.removeNode(router);
+    nodes.removed.forEach(n => {
+      const node = this.getComponent(n);
+      this.removeNode(node);
+    });
+    nodes.updated.forEach(n => {
+      const node = this.getComponent(n);
+      this.removeNode(node);
+      this.addNode(node);
+    });
+    nodes.added.forEach(n => {
+      const node = this.getComponent(n);
+      this.addNode(node);
+    });
+    this.addNode(router);
+    this.graph = graph;
+  }
+
   loadNodes(nodes: Component[]): void {
     nodes.forEach(node => {
-      this.addComponent(node);
+      this.addNode(node);
     });
   }
 
   async start() {
+    if (this.running) return;
+    this.running = true;
     for (const [_, node] of this.nodes) {
       const context = this.context({
         source: { network: this.id, node: node.id },
         target: { network: this.id, node: this.options.router }
       });
       await node.setup(context);
-      this.msgbus.addListener(`${this.id}.${node.id}`, async () => {
-        await node.process(context);
-      });
     }
   }
 
   async stop() {
+    if (!this.running) return;
+    this.running = false;
     for (const [_, node] of this.nodes) {
-      this.msgbus.removeListener(`${this.id}.${node.id}`);
       await node.teardown();
     }
   }
