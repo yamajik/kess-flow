@@ -113,6 +113,21 @@ export namespace Graph {
     node: string;
     port: string;
   }
+
+  export interface Node {
+    id: string;
+    [key: string]: any;
+  }
+
+  export interface Patch<T> {
+    added: T[];
+    removed: T[];
+    updated: T[];
+  }
+
+  export interface DiffResults {
+    nodes: Patch<Node>;
+  }
 }
 
 export namespace Component {

@@ -21,7 +21,7 @@ export class Graph {
     return new Graph(JSON.parse(fs.readFileSync(filename).toString()));
   }
 
-  get nodes(): any[] {
+  get nodes(): types.Graph.Node[] {
     return Object.keys(this.options.processes).map(id => ({
       id,
       ...this.options.processes[id]
@@ -37,6 +37,32 @@ export class Graph {
 
   getNextPorts(np: types.Graph.ConnectionPort): types.Graph.ConnectionPort[] {
     return this.routeMap.get(cpToString(np)) || [];
+  }
+
+  diff(old: Graph): types.Graph.DiffResults {
+    const results: types.Graph.DiffResults = {
+      nodes: {
+        added: [],
+        removed: [],
+        updated: []
+      }
+    };
+    const nodeIds = new Set([
+      ...Object.keys(this.options.processes),
+      ...Object.keys(old.options.processes)
+    ]);
+    nodeIds.forEach(id => {
+      const oldNode = old.options.processes[id],
+        newNode = this.options.processes[id];
+      if (!oldNode) {
+        results.nodes.added.push({ id, newNode });
+      } else if (!newNode) {
+        results.nodes.removed.push({ id, oldNode });
+      } else if (JSON.stringify(newNode) !== JSON.stringify(oldNode)) {
+        results.nodes.updated.push({ id, newNode });
+      }
+    });
+    return results;
   }
 }
 
