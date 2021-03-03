@@ -1,19 +1,18 @@
 {
   "name": "kess-flow",
   "version": "0.1.0",
-  "description": "",
+  "description": "Advance Async FBP",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "me@yamajik.com",
   "license": "ISC",
   "devDependencies": {
     "@types/events": "^3.0.0",
     "@types/node": "^14.14.31",
     "@types/uuid": "^8.3.0",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.1.5"
+    "ts-node": "^9.1.1"
   },
   "dependencies": {
     "@types/ioredis": "^4.22.0",
@@ -21,6 +20,7 @@
     "ioredis": "^4.23.0",
     "ioredis-mock": "^5.2.4",
     "microseconds": "^0.2.0",
+    "typescript": "^4.2.2",
     "uuid": "^8.3.2"
   }
 }
