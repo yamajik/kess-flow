@@ -4,6 +4,7 @@
         "target": "ES2016",
         "outDir": "dist",
         "declaration": true,
+        "module": "commonjs",
         "moduleResolution": "Node"
     },
     "include": [
