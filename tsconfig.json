@@ -2,6 +2,11 @@
     "compileOnSave": true,
     "compilerOptions": {
         "target": "ES2016",
-        "moduleResolution": "Node",
-    }
+        "outDir": "dist",
+        "declaration": true,
+        "moduleResolution": "Node"
+    },
+    "include": [
+        "src"
+    ]
 }

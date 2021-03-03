@@ -31,7 +31,7 @@ export class Redis {
   }
 }
 
-namespace Module {
+export namespace Module {
   class Base {
     client: IORedis.Redis;
     key: string;

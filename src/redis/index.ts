@@ -1,2 +1,2 @@
-export { Redis } from "./client";
+export { Redis, Module } from "./client";
 export * from "./types";

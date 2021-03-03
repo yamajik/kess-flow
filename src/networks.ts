@@ -169,7 +169,7 @@ export class Network {
 
 export function getTranspileComponent(
   options: types.Network.GetComponentOptions
-): Component {
+): Component | null {
   if (!options.metadata.def.hasOwnProperty("code")) return null;
   const ComponentClass: types.Component.MetaClass = eval(
     ts.transpileModule(options.metadata.def.code, {}).outputText

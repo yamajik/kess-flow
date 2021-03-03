@@ -2,8 +2,13 @@
   "name": "kess-flow",
   "version": "0.1.0",
   "description": "Advance Async FBP",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "me@yamajik.com",

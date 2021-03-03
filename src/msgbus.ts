@@ -29,11 +29,11 @@ export class MsgBus {
     };
   }
 
-  mq(key: string, options?: redis.MQ.Options) {
+  public mq(key: string, options?: redis.MQ.Options): redis.Module.MQ {
     return this.client.mq(key, { ...this.mqOptions, ...options });
   }
 
-  queue(key: string, options?: redis.Queue.Options) {
+  queue(key: string, options?: redis.Queue.Options): redis.Module.Queue<any> {
     return this.client.queue<any>(key, { ...this.queueOptions, ...options });
   }
 
@@ -47,7 +47,7 @@ export class MsgBus {
 
   async getData(
     key: string,
-    options: types.MsgBus.HasDataOptions
+    options?: types.MsgBus.HasDataOptions
   ): Promise<types.MsgBus.Data> {
     const opts = { count: 1, ...options };
     const data = await this.queue(key).pop(opts);

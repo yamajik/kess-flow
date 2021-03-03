@@ -136,7 +136,7 @@ export namespace Graph {
 
 export namespace Component {
   export interface Options {
-    id: string;
+    id?: string;
     [key: string]: any;
   }
 
