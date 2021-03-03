@@ -11,9 +11,9 @@ export namespace Network {
     router?: string | null;
     nodes?: Component[];
     components?: {
-      [key: string]: { new (options: Component.Options): Component };
+      [key: string]: Component.MetaClass;
     };
-    getComponent?: (options: any) => Component;
+    getComponent?: (options: GetComponentOptions) => Component | null;
     [key: string]: any;
   }
 
@@ -70,6 +70,10 @@ export namespace Network {
 
   export interface GetDataOptions {
     count?: number;
+  }
+
+  export interface GetComponentOptions extends Component.Options {
+    type?: string;
   }
 }
 
@@ -134,5 +138,9 @@ export namespace Component {
   export interface Options {
     id: string;
     [key: string]: any;
+  }
+
+  export interface MetaClass {
+    new (options: Options): Component;
   }
 }

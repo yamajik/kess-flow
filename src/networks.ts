@@ -4,6 +4,7 @@ import { Input, Output } from "./context";
 import { Graph } from "./graph";
 import { MsgBus } from "./msgbus";
 import * as types from "./types";
+import * as ts from "typescript";
 
 export class Network {
   msgbus: MsgBus;
@@ -72,14 +73,15 @@ export class Network {
     return this.nodes.delete(node.id);
   }
 
-  getComponent(options: any): Component {
+  getComponent(options: types.Network.GetComponentOptions): Component {
     const opts = {
       type: "default",
       ...options
     };
 
     if (this.options.getComponent) {
-      return this.options.getComponent(opts);
+      const node = this.options.getComponent(opts);
+      if (node) return node;
     }
 
     const compnentClass = this.options.components[opts.type];
@@ -162,5 +164,24 @@ export class Network {
       input: new Input(this.msgbus, options),
       output: new Output(this.msgbus, options)
     };
+  }
+}
+
+export function getTranspileComponent(
+  options: types.Network.GetComponentOptions
+): Component {
+  if (!options.metadata.def.hasOwnProperty("code")) return null;
+  const ComponentClass: types.Component.MetaClass = eval(
+    ts.transpileModule(options.metadata.def.code, {}).outputText
+  );
+  return new ComponentClass(options);
+}
+
+export class TranspileNetwork extends Network {
+  constructor(options: types.Network.Options) {
+    super({
+      getComponent: getTranspileComponent,
+      ...options
+    });
   }
 }

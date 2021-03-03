@@ -49,7 +49,7 @@ class Node {
   }
 }
 
-class Msg {
+export class Context {
   msgbus: MsgBus;
   options: types.Network.ContextOptions;
   source: Node;
@@ -73,7 +73,7 @@ class Msg {
   }
 }
 
-export class Input extends Msg {
+export class Input extends Context {
   async hasData(
     port: string | types.Network.MsgID,
     options?: types.Network.HasDataOptions
@@ -103,7 +103,7 @@ export class Input extends Msg {
   }
 }
 
-export class Output extends Msg {
+export class Output extends Context {
   async sendData(port: string | types.Network.MsgID, data: any): Promise<void> {
     let mid, eid: string;
     if (typeof port === "string") {
