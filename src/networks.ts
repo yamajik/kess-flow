@@ -72,7 +72,8 @@ export class Network {
   removeNode(node: Component): boolean {
     this.msgbus.removeListener(`${this.id}.${node.id}`);
     if (this.running) {
-      node.teardown();
+      const oldNode = this.nodes.get(node.id);
+      if (oldNode) oldNode.teardown();
     }
     return this.nodes.delete(node.id);
   }
