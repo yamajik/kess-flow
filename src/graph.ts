@@ -50,7 +50,7 @@ export class Graph {
     if (!old) {
       Object.keys(this.options.processes).forEach(id => {
         const newNode = this.options.processes[id];
-        results.nodes.added.push({ id, newNode });
+        results.nodes.added.push({ id, ...newNode });
       });
     } else {
       const nodeIds = new Set([
@@ -61,11 +61,11 @@ export class Graph {
         const oldNode = old.options.processes[id],
           newNode = this.options.processes[id];
         if (!oldNode) {
-          results.nodes.added.push({ id, newNode });
+          results.nodes.added.push({ id, ...newNode });
         } else if (!newNode) {
-          results.nodes.removed.push({ id, oldNode });
+          results.nodes.removed.push({ id, ...oldNode });
         } else if (JSON.stringify(newNode) !== JSON.stringify(oldNode)) {
-          results.nodes.updated.push({ id, newNode });
+          results.nodes.updated.push({ id, ...newNode });
         }
       });
     }
