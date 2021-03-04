@@ -4,6 +4,7 @@ import { MsgBus } from "./msgbus";
 import * as redis from "./redis";
 
 export namespace Network {
+  export type StaticThis<T> = { new (options?: Options): T };
   export interface Options {
     msgbus?: MsgBus;
     id?: string;

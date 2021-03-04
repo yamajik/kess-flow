@@ -1,10 +1,10 @@
+import * as ts from "typescript";
 import * as uuid from "uuid";
 import { Component, Router } from "./components";
 import { Input, Output } from "./context";
 import { Graph } from "./graph";
 import { MsgBus } from "./msgbus";
 import * as types from "./types";
-import * as ts from "typescript";
 
 export class Network {
   msgbus: MsgBus;
@@ -35,13 +35,17 @@ export class Network {
     }
   }
 
-  static load(filename: string, options?: types.Network.Options): Network {
-    const network = new Network(options);
+  static load<T extends Network>(
+    this: types.Network.StaticThis<T>,
+    filename: string,
+    options?: types.Network.Options
+  ): T {
+    const network = new this(options);
     network.loadFromGraph(Graph.load(filename));
     return network;
   }
 
-  update(filename: string): Network {
+  update(filename: string): this {
     this.updateFromGraph(Graph.load(filename));
     return this;
   }
@@ -78,7 +82,6 @@ export class Network {
       type: "default",
       ...options
     };
-
     if (this.options.getComponent) {
       const node = this.options.getComponent(opts);
       if (node) return node;
@@ -170,9 +173,14 @@ export class Network {
 export function getTranspileComponent(
   options: types.Network.GetComponentOptions
 ): Component | null {
-  if (!options.metadata.def.hasOwnProperty("code")) return null;
+  if (!options.metadata?.def?.code) return null;
   const ComponentClass: types.Component.MetaClass = eval(
-    ts.transpileModule(options.metadata.def.code, {}).outputText
+    ts.transpileModule(options.metadata.def.code, {
+      compilerOptions: {
+        target: ts.ScriptTarget.ES2016,
+        module: ts.ModuleKind.CommonJS
+      }
+    }).outputText
   );
   return new ComponentClass(options);
 }
