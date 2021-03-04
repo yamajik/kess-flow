@@ -16,16 +16,20 @@ export class Component {
     return this.options.id;
   }
 
+  get type(): string {
+    return this.constructor.name;
+  }
+
   async setup(_: types.Network.Context) {
-    console.log(this.id, "setup");
+    console.log(`(${this.type})`, this.id, "setup");
   }
 
   async process(_: types.Network.Context) {
-    console.log(this.id, "process");
+    console.log(`(${this.type})`, this.id, "process");
   }
 
   async teardown() {
-    console.log(this.id, "teardown");
+    console.log(`(${this.type})`, this.id, "teardown");
   }
 }
 
