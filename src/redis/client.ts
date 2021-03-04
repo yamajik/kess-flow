@@ -1,8 +1,7 @@
 import * as IORedis from "ioredis";
 import * as utils from "../utils";
 import { MQ, Queue, RedisOptions } from "./types";
-import * as us from "microseconds";
-const RedisMock: typeof IORedis = require("ioredis-mock");
+const RedisMock: typeof IORedis = require("@kess-flow/ioredis-mock");
 
 export class Redis {
   client: IORedis.Redis;
@@ -90,7 +89,7 @@ export namespace Module {
         this.key,
         "MAXLEN",
         this.options.maxlen,
-        `${us.now() * 1000}`,
+        "*",
         ...this.formatMessageData(data)
       );
     }
