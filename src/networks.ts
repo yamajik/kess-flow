@@ -186,7 +186,7 @@ export function getTranspileComponent(
 }
 
 export class TranspileNetwork extends Network {
-  constructor(options: types.Network.Options) {
+  constructor(options?: types.Network.Options) {
     super({
       getComponent: getTranspileComponent,
       ...options
