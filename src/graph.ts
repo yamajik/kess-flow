@@ -17,6 +17,10 @@ export class Graph {
     }, {});
   }
 
+  json(): any {
+    return this.options;
+  }
+
   static load(filename: string): Graph {
     return new Graph(JSON.parse(fs.readFileSync(filename).toString()));
   }

@@ -1,3 +1,4 @@
+import { createRequire } from "module";
 import * as ts from "typescript";
 import * as uuid from "uuid";
 import { Component, Router } from "./components";
@@ -33,6 +34,13 @@ export class Network {
     if (this.options.nodes) {
       this.loadNodes(this.options.nodes);
     }
+  }
+
+  json(): any {
+    return {
+      status: this.running ? "running" : "stopped",
+      graph: this.graph ? this.graph.json : null
+    };
   }
 
   static load<T extends Network>(
@@ -175,14 +183,16 @@ export function getTranspileComponent(
   options: types.Network.GetComponentOptions
 ): Component | null {
   if (!options.metadata?.def?.code) return null;
+  const code = ts.transpileModule(options.metadata.def.code, {
+    compilerOptions: {
+      target: ts.ScriptTarget.ES2016,
+      module: ts.ModuleKind.CommonJS
+    }
+  }).outputText;
+  const exports = {};
   const ComponentClass: types.Component.MetaClass = eval(
-    ts.transpileModule(options.metadata.def.code, {
-      compilerOptions: {
-        target: ts.ScriptTarget.ES2016,
-        module: ts.ModuleKind.CommonJS
-      }
-    }).outputText
-  );
+    `(require, exports, module) => {{${code}}return exports}`
+  )(createRequire(require.main.filename), exports, require.main).default;
   return new ComponentClass(options);
 }
 

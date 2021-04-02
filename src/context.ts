@@ -88,6 +88,13 @@ export class Input extends Context {
     return await this.msgbus.hasData(mid, options);
   }
 
+  async has(
+    port: string | types.Network.MsgID,
+    options?: types.Network.HasDataOptions
+  ): Promise<boolean> {
+    return await this.hasData(port, options);
+  }
+
   async getData(
     port: string | types.Network.MsgID,
     options?: types.Network.GetDataOptions
@@ -100,6 +107,13 @@ export class Input extends Context {
       mid = node.midString(port.port);
     }
     return await this.msgbus.getData(mid, options);
+  }
+
+  async get(
+    port: string | types.Network.MsgID,
+    options?: types.Network.GetDataOptions
+  ): Promise<any | any[]> {
+    return await this.getData(port, options);
   }
 }
 
